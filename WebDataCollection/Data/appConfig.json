@@ -1,0 +1,8 @@
+{
+  "TaskConfigurationStoragePath": "C:\\Users\\Administrator\\Desktop\\WebDataCollection\\Output\\Debug\\net461\\Data\\PluginData",
+  "MaxTaskRunCount": 2,
+  "HomePage": "https://www.baidu.com",
+  "TaskQueueSaveFileName": "TaskList.tsk",
+  "LogPath": "Logs",
+  "AutoLaunch": true
+}

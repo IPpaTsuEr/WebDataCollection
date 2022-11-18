@@ -1,0 +1,32 @@
+{
+  "SymbolName": "ProcessAssistant.Weibo.WeiboAssistant",
+  "DisplayName": "WeiBo",
+  "MatchedHostName": "weibo.com",
+  "WorkSpaceRoot": "E:/WeiBoCollection",
+  "Version": {
+    "Major": 1,
+    "Minor": 0,
+    "Build": 0,
+    "Revision": 0,
+    "MajorRevision": 0,
+    "MinorRevision": 0
+  },
+  "MaxExitLoopQueryTimes": 100,
+  "BlogImageTemplate": [
+    "https://wx{0}.sinaimg.cn/oslarge/{1}.{2}",
+    "https://wx{0}.sinaimg.cn/large/{1}.{2}"
+  ],
+  "AjaxResposeUrls": {
+    "https:\/\/weibo.com\/ajax\/profile\/info\\?uid=[0-9]+": "UserHomePageAjax", //用户主页信息
+    "https:\/\/weibo.com\/ajax\/statuses\/mymblog\\?uid=[0-9]+": "UserBlogsAjax", //用户博文
+    "https:\/\/weibo.com\/ajax\/friendships\/friends\\?page=[0-9]+&uid=[0-9]+": "UserFollowsAjax", //关注列表
+    "https:\/\/weibo.com\/ajax\/friendships\/friends\\?relate=fans&page=[0-9]+&uid=[0-9]+": "UserFansAjax", //粉丝列表
+    "https:\/\/weibo.com\/ajax\/profile\/detail\\?uid=[0-9]+": "UserInfoAjax", //用户详细信息
+    "https:\/\/weibo.com\/ajax\/statuses\/longtext\\?id=": "UserLongBlogContentAjax" //长博文文本
+  },
+  "DenyUrls": [
+    "官方微博",
+    "有限公司"
+  ]
+
+}

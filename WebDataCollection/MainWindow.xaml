@@ -1,0 +1,377 @@
+﻿<Window
+    x:Class="WebDataCollection.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WebDataCollection"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="clr-namespace:WebDataCollection.Model"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:vm="clr-namespace:WebDataCollection.ViewModel"
+    Title="{Binding SelectedBrowser.Title}"
+    Width="800"
+    Height="450"
+    d:DataContext="{d:DesignInstance Type=vm:MainViewModel,
+                                     IsDesignTimeCreatable=True}"
+    Icon="{Binding SelectedBrowser.Icon}"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style x:Key="RebuildButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Margin="{TemplateBinding Margin}"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightGray" />
+                                <Setter Property="Cursor" Value="Hand" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="BorderBrush" Value="LightBlue" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="LightGray" />
+                                <Setter Property="Opacity" Value="0.3" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:Key="PluginListTemp" DataType="{x:Type md:CollectionPlugin}">
+            <Border x:Name="PART_Outer">
+                <Grid Margin="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        TextAlignment="Left">
+                        <Run Text="{Binding DisplayName}" />
+                    </TextBlock>
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="4,0"
+                        VerticalAlignment="Center"
+                        TextAlignment="Right"
+                        Visibility="{Binding IsExcuting, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Run Text="剩余:" />
+                        <Run Text="{Binding TaskListCount}" />
+                    </TextBlock>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+
+                        <Button
+                            Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.PauseTaskCommand}"
+                            CommandParameter="{Binding}"
+                            IsEnabled="{Binding IsPaused, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                            Style="{StaticResource RebuildButton}"
+                            ToolTip="暂停"
+                            Visibility="{Binding IsExcuting, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Image
+                                Width="26"
+                                Height="26"
+                                Source="{StaticResource Pause}"
+                                Stretch="UniformToFill" />
+                        </Button>
+                        <Button
+                            Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ResumeTaskCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource RebuildButton}"
+                            ToolTip="继续"
+                            Visibility="{Binding IsPaused, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Image
+                                Width="26"
+                                Height="26"
+                                Source="{StaticResource Start}"
+                                Stretch="UniformToFill" />
+                        </Button>
+                        <Button
+                            Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.StartTaskCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource RebuildButton}"
+                            ToolTip="开始解析"
+                            Visibility="{Binding IsExcuting, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+                            <Image
+                                Width="26"
+                                Height="26"
+                                Source="{StaticResource Start}"
+                                Stretch="UniformToFill" />
+                        </Button>
+                        <Button
+                            Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.StopTaskCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource RebuildButton}"
+                            ToolTip="停止解析"
+                            Visibility="{Binding IsExcuting, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Image
+                                Width="26"
+                                Height="26"
+                                Source="{StaticResource Close}"
+                                Stretch="UniformToFill" />
+                        </Button>
+                        <Button
+                            Width="26"
+                            Height="26"
+                            Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.RebuildCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource RebuildButton}"
+                            ToolTip="重建任务信息">
+                            <Image
+                                Width="18"
+                                Height="18"
+                                Source="{StaticResource DataCollection}"
+                                Stretch="UniformToFill" />
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        MaxWidth="240"
+                        HorizontalAlignment="Left"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding CurrentInfo}"
+                        Visibility="{Binding IsExcuting, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Run Text="{Binding CurrentInfo}" />
+                    </TextBlock>
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="PART_Outer" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="PART_Outer" Property="Background" Value="LightBlue" />
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="F12" Command="{Binding F12Command}" />
+        <KeyBinding Key="F5" Command="{Binding F5Command}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button
+                        Command="{Binding SelectedBrowser.WebBrowser.BackCommand}"
+                        IsEnabled="{Binding SelectedBrowser.WebBrowser.CanGoBack}"
+                        Style="{StaticResource RebuildButton}"
+                        ToolTip="后退">
+
+                        <Image
+                            Width="24"
+                            Source="{StaticResource Back}"
+                            Stretch="UniformToFill" />
+                    </Button>
+                    <Button
+                        Command="{Binding SelectedBrowser.WebBrowser.ForwardCommand}"
+                        IsEnabled="{Binding SelectedBrowser.WebBrowser.CanGoForward}"
+                        Style="{StaticResource RebuildButton}"
+                        ToolTip="前进">
+
+                        <Image
+                            Width="24"
+                            Source="{StaticResource RightArrow}"
+                            Stretch="UniformToFill" />
+                    </Button>
+                    <Button
+                        Command="{Binding SelectedBrowser.WebBrowser.ReloadCommand}"
+                        Style="{StaticResource RebuildButton}"
+                        ToolTip="重新载入">
+                        <Image
+                            Width="24"
+                            Source="{StaticResource Refresh}"
+                            Stretch="UniformToFill" />
+                    </Button>
+                    <Button
+                        Command="{Binding HomePageCommand}"
+                        Style="{StaticResource RebuildButton}"
+                        ToolTip="主页">
+                        <Image
+                            Width="20"
+                            Margin="2"
+                            Source="{StaticResource Home}"
+                            Stretch="UniformToFill" />
+                    </Button>
+                    <Button
+                        Command="{Binding NewPageCommand}"
+                        Style="{StaticResource RebuildButton}"
+                        ToolTip="新标签页">
+                        <TextBlock
+                            Margin="0"
+                            Padding="0"
+                            FontSize="20"
+                            Text="+" />
+                    </Button>
+                </StackPanel>
+
+                <TextBox
+                    Grid.Column="2"
+                    Height="26"
+                    Margin="2,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="14"
+                    Text="{Binding SelectedBrowser.Url}" />
+                <StackPanel Grid.Column="3" Orientation="Horizontal">
+                    <Button
+                        Command="{Binding JumpToCommand}"
+                        Style="{StaticResource RebuildButton}"
+                        ToolTip="跳转">
+                        <Image
+                            Width="12"
+                            Source="{StaticResource Forward}"
+                            Stretch="UniformToFill" />
+                    </Button>
+                    <Button
+                        Command="{Binding AddTaskCommand}"
+                        Style="{StaticResource RebuildButton}"
+                        ToolTip="添加到收集任务">
+                        <Image
+                            Width="20"
+                            Source="{StaticResource Add}"
+                            Stretch="UniformToFill" />
+                    </Button>
+                    <ToggleButton
+                        x:Name="PluginListExpander"
+                        Width="32"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTip="收集活动列表">
+                        <Image
+                            Width="20"
+                            Source="{StaticResource Analysis}"
+                            Stretch="UniformToFill" />
+
+                    </ToggleButton>
+                    <Popup
+                        AllowsTransparency="True"
+                        IsOpen="{Binding ElementName=PluginListExpander, Path=IsChecked, Mode=TwoWay}"
+                        Placement="Bottom"
+                        PlacementTarget="{Binding ElementName=PluginListExpander}"
+                        StaysOpen="False">
+                        <Border Width="260">
+                            <ListBox ItemTemplate="{StaticResource PluginListTemp}" ItemsSource="{Binding FoundedPlugins}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="MinHeight" Value="36" />
+                                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Template">
+
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <Border
+                                                        Width="{TemplateBinding Width}"
+                                                        Height="{TemplateBinding Height}"
+                                                        Margin="{TemplateBinding Margin}"
+                                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+
+                        </Border>
+
+                    </Popup>
+                </StackPanel>
+
+            </Grid>
+            <TabControl
+                Grid.Row="1"
+                Background="White"
+                ItemsSource="{Binding Browsers}"
+                SelectedItem="{Binding SelectedBrowser}"
+                SnapsToDevicePixels="True"
+                UseLayoutRounding="True">
+                <TabControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type md:BrowserPage}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Image
+                                Grid.Column="0"
+                                Width="18"
+                                Height="18"
+                                Source="{Binding Icon}" />
+                            <Border Grid.Column="1" Width="4" />
+                            <TextBlock
+                                Grid.Column="2"
+                                Width="160"
+                                Margin="0,4"
+                                VerticalAlignment="Center"
+                                Text="{Binding Title}"
+                                TextAlignment="Left"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap"
+                                ToolTip="{Binding Title}" />
+                            <Button
+                                Grid.Column="3"
+                                Height="26"
+                                Background="Transparent"
+                                Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ClosePageCommand}"
+                                CommandParameter="{Binding}"
+                                Cursor="Hand"
+                                Style="{StaticResource RebuildButton}">
+                                <TextBlock Text="X" />
+                            </Button>
+                        </Grid>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type md:BrowserPage}">
+                        <ContentControl Content="{Binding Browser}" />
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+        </Grid>
+
+    </Grid>
+
+</Window>

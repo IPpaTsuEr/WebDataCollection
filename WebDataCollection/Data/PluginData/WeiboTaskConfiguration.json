@@ -1,0 +1,199 @@
+[
+
+  {
+    "Name": "WeiBo",
+    "MatchRegex": "^https://weibo.com/[u|n]?/?[0-9A-Za-z]+[?lpage=profileRecom]*[^/]$",
+    "Processers": [
+      {
+        "Symbol": "5000",
+        "Code": "",
+        "Name": "",
+        "Description": "等待页面数据请求完毕",
+        "ResultType": "Delay"
+      },
+      {
+        "Symbol": "https://weibo.com/u/[0-9]+",
+        "Code": "document.getElementsByClassName(\"ProfileHeader_name_1KbBs\")[0].innerText",
+        "Name": "TaskInfo",
+        "Description": "用户名",
+        "ResultType": "CacheData"
+      },
+      //{
+      //  "Symbol": "https://weibo.com/u/[0-9]+",
+      //  "Code": "document.getElementsByClassName(\"wbpro-screen-v2 woo-box-flex woo-box-alignCenter woo-box-justifyBetween\")[0].innerText",
+      //  "Name": "TotalCount",
+      //  "Description": "微博总数",
+      //  "ResultType": "CacheData"
+      //},
+      //{
+      //  "Symbol": "https://weibo.com/u/[0-9]+",
+      //  "Code": "document.getElementsByClassName(\"woo-avatar-img\")[0].src",
+      //  "Name": "UserIcon",
+      //  "Description": "用户头像",
+      //  "ResultType": "CacheData"
+      //},
+      //{
+      //  "Symbol": "https://weibo.com/u/[0-9]+",
+      //  "Code": "",
+      //  "Name": "",
+      //  "Description": "保存主页信息",
+      //  "ResultType": "SaveCacheData",
+      //  "StorageDescriptor": {
+      //    "Name": "UserInfo",
+      //    "FileType": ".txt"
+      //  }
+      //},
+      {
+        "Symbol": "CheckAndUpdateUserBlogs",
+        "Code": "",
+        "Name": "",
+        "Description": "检查已有用户的博文更新",
+        "ResultType": "CheckUpdate"
+      },
+      {
+        "Symbol": "https://weibo.com/u/page/follow/[0-9]+",
+        "Code": "document.getElementsByClassName(\"ALink_none_1w6rm ProfileHeader_alink_tjHJR\")[1].href",
+        "Name": "",
+        "Description": "关注列表Url解析任务",
+        "ResultType": "TaskUrl"
+      },
+      //{
+      //  "Symbol": "https://weibo.com/u/page/follow/[0-9]+?relate=fans",
+      //  "Code": "document.getElementsByClassName(\"ALink_none_1w6rm ProfileHeader_alink_tjHJR\")[0].href",
+      //  "Name": "",
+      //  "Description": "粉丝列表Url解析任务",
+      //  "ResultType": "TaskUrl"
+      //},
+      {
+        "Symbol": "BlogCountChanged",
+        "Code": "",
+        "Name": "",
+        "Description": "滚动页面刷新博文并解析",
+        "ResultType": "Loop",
+        "Processers": [
+          {
+            "Symbol": "",
+            "Code": "window.scroll({top: document.getElementById(\"scroller\").offsetHeight - 800 ,left:0 , behavior: \"smooth\"});",
+            "Name": "",
+            "Description": "滚动页面",
+            "ResultType": "None"
+          },
+          {
+            "Symbol": "8000",
+            "Code": "",
+            "Name": "",
+            "Description": "等待页面数据请求完毕",
+            "ResultType": "Delay"
+          },
+          {
+            "Symbol": "",
+            "Code": "window.scroll({top: document.getElementById(\"scroller\").offsetHeight  ,left:0 , behavior: \"smooth\"});",
+            "Name": "",
+            "Description": "滚动页面",
+            "ResultType": "None"
+          },
+          {
+            "Symbol": "5000",
+            "Code": "",
+            "Name": "",
+            "Description": "等待页面数据请求完毕",
+            "ResultType": "Delay"
+          },
+          {
+            "Symbol": "",
+            "Code": "document.getElementsByClassName(\"expand\").forEach(function(item){item.click();})",
+            "Name": "",
+            "Description": "展开长博文",
+            "ResultType": "None"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Weibo",
+    "MatchRegex": "https://weibo.com/u/page/follow/[0-9]+?",
+    "Processers": [
+      {
+        "Symbol": "FollowsOrFansCountChanged",
+        "Code": "",
+        "Name": "",
+        "Description": "滚动页面刷新关注列表并解析",
+        "ResultType": "Loop",
+        "Processers": [
+          {
+            "Symbol": "",
+            "Code": "window.scroll({top: document.body.scrollHeight - 800,left:0 , behavior: \"smooth\"});",
+            "Name": "",
+            "Description": "滚动页面",
+            "ResultType": "None"
+          },
+          {
+            "Symbol": "10000",
+            "Code": "",
+            "Name": "",
+            "Description": "等待页面数据请求完毕",
+            "ResultType": "Delay"
+          },
+          {
+            "Symbol": "",
+            "Code": "window.scroll({top: document.body.scrollHeight ,left:0 , behavior: \"smooth\"});",
+            "Name": "",
+            "Description": "滚动页面",
+            "ResultType": "None"
+          },
+          {
+            "Symbol": "5000",
+            "Code": "",
+            "Name": "",
+            "Description": "等待页面数据请求完毕",
+            "ResultType": "Delay"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Weibo",
+    "MatchRegex": "https://weibo.com/u/page/follow/[0-9]+?relate=fans",
+    "Processers": [
+      {
+        "Symbol": "FollowsOrFansCountChanged",
+        "Code": "",
+        "Name": "",
+        "Description": "滚动页面刷新粉丝列表并解析",
+        "ResultType": "Loop",
+        "Processers": [
+          {
+            "Symbol": "",
+            "Code": "window.scroll({top: document.body.scrollHeight - 800 ,left:0 , behavior: \"smooth\"});",
+            "Name": "",
+            "Description": "滚动页面",
+            "ResultType": "None"
+          },
+          {
+            "Symbol": "10000",
+            "Code": "",
+            "Name": "",
+            "Description": "等待页面数据请求完毕",
+            "ResultType": "Delay"
+          },
+          {
+            "Symbol": "",
+            "Code": "window.scroll({top: document.body.scrollHeight ,left:0 , behavior: \"smooth\"});",
+            "Name": "",
+            "Description": "滚动页面",
+            "ResultType": "None"
+          },
+          {
+            "Symbol": "5000",
+            "Code": "",
+            "Name": "",
+            "Description": "等待页面数据请求完毕",
+            "ResultType": "Delay"
+          }
+        ]
+      }
+    ]
+  }
+]
